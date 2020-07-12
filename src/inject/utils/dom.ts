@@ -145,16 +145,19 @@ export function watchForNodePosition<T extends Node>(
         observer.disconnect();
         restore.cancel();
     };
+    const skip = () => {
+        observer.takeRecords();
+    };
     const updateParent = (parentNode: Node & ParentNode) => {
         parent = parentNode;
         stop();
         run();
     };
     run();
-    return {run, stop};
+    return {run, stop, skip};
 }
 
-export function iterateShadowNodes(root: Node, iterator: (node: Element) => void) {
+export function iterateShadowHosts(root: Node, iterator: (host: Element) => void) {
     if (root == null) {
         return;
     }
@@ -174,7 +177,7 @@ export function iterateShadowNodes(root: Node, iterator: (node: Element) => void
         node = walker.nextNode() as Element
     ) {
         iterator(node);
-        iterateShadowNodes(node.shadowRoot, iterator);
+        iterateShadowHosts(node.shadowRoot, iterator);
     }
 }
 
